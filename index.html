@@ -60,7 +60,7 @@ body.login-locked{background:#f7f9fc}
 @media(max-width:575px){.reference-inbox .chat-header-status{display:none}.reference-inbox .message-stream{padding:13px}.xy-lines{min-width:540px}.red-count{font-size:8px!important;white-space:normal}.cal-day{align-items:flex-start}}
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<!-- Native Supabase REST RPC: no external JS library required for password login. -->
 </head>
 <body><div id="app"></div><div id="toastStack" class="toast-stack" aria-live="polite"></div>
 <script>
@@ -140,7 +140,7 @@ function inbox(){
     '<div class="empty-message"><div><strong>No inquiry selected</strong>New form submissions will appear here after a successful load.</div></div>'}</div>`;
 }
 
-function analyticsPage(){const a=analyticsSummary();const abandon=Array.isArray(a.abandon_by_step)?a.abandon_by_step:[];const steps=Array.isArray(a.step_visits)?a.step_visits:[];const total=a.total_started||0,completed=a.completed_count||0,left=a.left_count||0,active=a.active_now||0;const deviceTotal=(a.mobile_count||0)+(a.desktop_count||0)+(a.tablet_count||0);const cards=[['Started form',total,'users','Unique visitors who started the form'],['Completed form',completed,'check',`${pct(completed,total)}% completion rate`],['Left form',left,'x','Inactive unfinished sessions'],['Filling right now',active,'clock','Active sessions in the last 2 minutes']];return `<div class="grid4">${cards.map(([h,v,icoName,foot])=>`<div class="card kpi"><div class="kpi-top"><span>${h}</span><span class="kpi-icon">${ic(icoName)}</span></div><div class="kpi-value">${v}</div><div class="kpi-foot">${foot}</div></div>`).join('')}</div><div class="layout-grid"><section class="card pad"><div class="card-head"><div><h2>Drop-off by step</h2><p>Where visitors stopped filling the form</p></div></div>${abandon.length?abandon.map(item=>`<div class="breakdown-row"><span class="left"><i class="mini-dot pending"></i> ${esc(item.step_label||item.step_key||'Unknown')}</span><strong>${Number(item.count||0)}</strong></div>`).join(''):`<div class="empty">No drop-offs recorded yet.</div>`}<div class="block-note">Left form = no submit success and no heartbeat in the last 2 minutes.</div></section><section class="card pad"><div class="card-head"><div><h2>Device breakdown</h2><p>How people are opening the form</p></div></div><div class="breakdown-row"><span class="left"><i class="mini-dot yes"></i> Mobile</span><strong>${a.mobile_count||0} <small class="minor">(${pct(a.mobile_count||0,deviceTotal)}%)</small></strong></div><div class="breakdown-row"><span class="left"><i class="mini-dot no"></i> Desktop</span><strong>${a.desktop_count||0} <small class="minor">(${pct(a.desktop_count||0,deviceTotal)}%)</small></strong></div><div class="breakdown-row"><span class="left"><i class="mini-dot pending"></i> Tablet</span><strong>${a.tablet_count||0} <small class="minor">(${pct(a.tablet_count||0,deviceTotal)}%)</small></strong></div><div class="block-note">Manual refresh only. Click Refresh whenever you want the latest funnel numbers.</div></section></div><div class="layout-grid bottom"><section class="card pad"><div class="card-head"><div><h2>Step progress</h2><p>How many sessions reached each step</p></div></div>${steps.length?steps.map(item=>`<div class="breakdown-row"><span class="left"><i class="mini-dot yes"></i> ${esc(item.step_label||item.step_key||'Unknown')}</span><strong>${Number(item.sessions||0)}</strong></div>`).join(''):`<div class="empty">No step data available yet.</div>`}</section><section class="card pad"><div class="card-head"><div><h2>Analytics summary</h2><p>Quick read of current form performance</p></div></div><div class="breakdown-row"><span class="left"><i class="mini-dot yes"></i> Completion rate</span><strong>${pct(completed,total)}%</strong></div><div class="breakdown-row"><span class="left"><i class="mini-dot no"></i> Drop-off rate</span><strong>${pct(left,total)}%</strong></div><div class="breakdown-row"><span class="left"><i class="mini-dot pending"></i> Active now</span><strong>${active}</strong></div>${state.analyticsError?`<div class="block-note" style="margin-top:14px;border-color:#f0d5da;background:#fff6f7;color:#a24d59">${esc(state.analyticsError)}</div>`:`<div class="block-note">Use this page to check how many people started, left, completed, and are currently filling the brief.</div>`}</section></div>`}
+function analyticsPage(){const a=analyticsSummary();const abandon=Array.isArray(a.abandon_by_step)?a.abandon_by_step:[];const steps=Array.isArray(a.step_visits)?a.step_visits:[];const total=a.total_started||0,completed=a.completed_count||0,left=a.left_count||0,active=a.active_now||0;const deviceTotal=(a.mobile_count||0)+(a.desktop_count||0)+(a.tablet_count||0);const cards=[['Started form',total,'users','Unique visitors who started the form'],['Completed form',completed,'check',`${pct(completed,total)}% completion rate`],['Left form',left,'x','Inactive unfinished sessions'],['Filling right now',active,'clock','Unique browsers active in the last 40 seconds']];return `<div class="grid4">${cards.map(([h,v,icoName,foot])=>`<div class="card kpi"><div class="kpi-top"><span>${h}</span><span class="kpi-icon">${ic(icoName)}</span></div><div class="kpi-value">${v}</div><div class="kpi-foot">${foot}</div></div>`).join('')}</div><div class="layout-grid"><section class="card pad"><div class="card-head"><div><h2>Drop-off by step</h2><p>Where visitors stopped filling the form</p></div></div>${abandon.length?abandon.map(item=>`<div class="breakdown-row"><span class="left"><i class="mini-dot pending"></i> ${esc(item.step_label||item.step_key||'Unknown')}</span><strong>${Number(item.count||0)}</strong></div>`).join(''):`<div class="empty">No drop-offs recorded yet.</div>`}<div class="block-note">Left form = no successful submit and no active session in the last 40 seconds.</div></section><section class="card pad"><div class="card-head"><div><h2>Device breakdown</h2><p>How people are opening the form</p></div></div><div class="breakdown-row"><span class="left"><i class="mini-dot yes"></i> Mobile</span><strong>${a.mobile_count||0} <small class="minor">(${pct(a.mobile_count||0,deviceTotal)}%)</small></strong></div><div class="breakdown-row"><span class="left"><i class="mini-dot no"></i> Desktop</span><strong>${a.desktop_count||0} <small class="minor">(${pct(a.desktop_count||0,deviceTotal)}%)</small></strong></div><div class="breakdown-row"><span class="left"><i class="mini-dot pending"></i> Tablet</span><strong>${a.tablet_count||0} <small class="minor">(${pct(a.tablet_count||0,deviceTotal)}%)</small></strong></div><div class="block-note">Active visitors auto-update every 15 seconds here. Other dashboard figures refresh only when you click Refresh.</div></section></div><div class="layout-grid bottom"><section class="card pad"><div class="card-head"><div><h2>Step progress</h2><p>How many sessions reached each step</p></div></div>${steps.length?steps.map(item=>`<div class="breakdown-row"><span class="left"><i class="mini-dot yes"></i> ${esc(item.step_label||item.step_key||'Unknown')}</span><strong>${Number(item.sessions||0)}</strong></div>`).join(''):`<div class="empty">No step data available yet.</div>`}</section><section class="card pad"><div class="card-head"><div><h2>Analytics summary</h2><p>Quick read of current form performance</p></div></div><div class="breakdown-row"><span class="left"><i class="mini-dot yes"></i> Completion rate</span><strong>${pct(completed,total)}%</strong></div><div class="breakdown-row"><span class="left"><i class="mini-dot no"></i> Drop-off rate</span><strong>${pct(left,total)}%</strong></div><div class="breakdown-row"><span class="left"><i class="mini-dot pending"></i> Active now (auto-updates)</span><strong>${active}</strong></div>${state.analyticsError?`<div class="block-note" style="margin-top:14px;border-color:#f0d5da;background:#fff6f7;color:#a24d59">${esc(state.analyticsError)}</div>`:`<div class="block-note">Use this page to check how many people started, left, completed, and are currently filling the brief.</div>`}</section></div>`}
 
 function calendarPage(){const m=state.calendarMonth,year=m.getFullYear(),month=m.getMonth(),first=new Date(year,month,1),start=first.getDay(),daysIn=new Date(year,month+1,0).getDate(),prevDays=new Date(year,month,0).getDate(),data=state.leads;const dayCounts={};data.forEach(l=>{const k=browserDate(l);dayCounts[k]=(dayCounts[k]||0)+1});let cells=[];for(let i=0;i<42;i++){const day=i-start+1;const date=new Date(year,month,day),key=dayKey(date),current=day>=1&&day<=daysIn,c=dayCounts[key]||0;cells.push(`<button class="cal-day ${!current?'muted':''} ${key===dayKey(new Date())?'today':''} ${state.dateFrom===key&&state.dateTo===key?'active':''}" data-cal-day="${key}" title="${c} inquiries on ${key}"><span class="cal-n">${date.getDate()}</span>${current?`<span class="cal-count red-count">${c} ${c===1?'lead':'leads'}</span>`:`<span class="cal-empty"> </span>`}</button>`)}return `<div class="card pad"><div class="calendar-caption"><div><strong>${m.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</strong><p class="minor" style="margin:6px 0 0">Click a date to filter all customer inquiries</p></div><div class="page-tools"><button class="btn" data-action="monthPrev" aria-label="Previous month">${ic('left')}</button><button class="btn" data-action="monthToday">Today</button><button class="btn" data-action="monthNext" aria-label="Next month">${ic('chev')}</button></div></div><div class="calendar-grid">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-header">${d}</div>`).join('')}${cells.join('')}</div><p class="minor" style="line-height:1.7;margin:15px 0 0">Red figures show total leads received on each date (all statuses). Select any date to filter its leads.</p></div>`}
 function settings(){return `<div class="card pad settings-card"><div class="card-head"><div><h2>Supabase connection</h2><p>Private ILMIX AI lead storage</p></div></div><div class="settings-row"><div><strong>Status</strong><small>Password-only admin access</small></div><span class="pill yes">Connected</span></div><div class="settings-row"><div><strong>Supabase project</strong><small>jdspovcqkxljnlnbzjdl.supabase.co</small></div></div><div class="settings-row"><div><strong>Refresh mode</strong><small>Manual only. Dashboard updates only when you click Refresh.</small></div><button class="btn" data-action="refresh">Refresh now</button></div><div class="settings-row"><div><strong>Last update</strong><small>${esc(formatLastSync())}</small></div></div><div class="settings-row"><div><strong>Analytics</strong><small>Form funnel analytics now track starts, drop-offs, completions, active sessions, and device type.</small></div></div><div class="settings-row"><div><strong>Lead statuses</strong><small>Interested and Not Interested. New customers remain Unmarked.</small></div></div><div class="settings-row"><div><strong>Signed-in session</strong><small>This browser remembers your login for up to 30 days. Sign out anytime.</small></div><button class="btn" data-action="disconnect">Sign out</button></div></div>`}
@@ -149,7 +149,36 @@ function drawerContent(){const l=chosen();if(!l)return '';return `<div class="dr
 function connectModal(){return ''}
 function render(){if(!authorized){$('app').innerHTML=loginHTML();return;}const [head]=heading();document.title=`${head} — ILMIX Sales Workspace`;const n=counts(state.leads);const content=state.page==='overview'?overview():state.page==='leads'?tablePage():state.page==='inbox'?inbox():state.page==='calendar'?calendarPage():state.page==='analytics'?analyticsPage():settings();$('app').innerHTML=`<div class="layout">${sidebar()}<div class="main"><header class="topbar"><div style="display:flex;align-items:center;gap:6px"><button class="mobile-menu" data-action="toggleMenu" aria-label="Open menu">${ic('menu')}</button><span class="crumb">Workspace / <b>${esc(head)}</b></span></div><div class="top-actions"><label class="top-search">${ic('search')}<input id="globalSearch" placeholder="Search inquiries…" value="${esc(state.query)}"><span class="keyhint">⌘ K</span></label><span class="header-indicator"><i class="live-dot"></i> ${state.error?'Connection error':state.lastSync?'Manual refresh ready':'Connecting'}</span>${avatar('IM')}</div></header><main class="workspace">${pageHeader()}${demoBanner()}${content}</main></div></div>${state.selected&&state.page!=='inbox'?drawerContent():''}`;}
 function updateViewPreservingInput(){const input=$('globalSearch');const selection=input&&document.activeElement===input?[input.selectionStart,input.selectionEnd]:null;render();if(selection){const next=$('globalSearch');if(next){next.focus();next.setSelectionRange(...selection)}}}
-function setPage(p){state.page=p;state.menu=false;state.selected=null;state.dateOpen=false;if(p==='overview'||p==='calendar')state.statusFilter='All';render()}
+function stopActiveCountPolling(){
+ if(activePollTimer){clearInterval(activePollTimer);activePollTimer=null;}
+}
+async function fetchActiveOnly(){
+ if(!authorized || !sessionToken || state.page!=='analytics' || document.hidden || activeRequestInFlight || !sb)return;
+ activeRequestInFlight=true;
+ try{
+  const {data,error}=await sb.rpc('ilmix_password_active_count',{p_token:sessionToken});
+  if(error)throw new Error(error.message||'Could not load live active count.');
+  const newCount=Number(data);
+  if(!Number.isFinite(newCount)||newCount<0)throw new Error('Invalid active visitor count received.');
+  if(!state.analytics)state.analytics={};
+  if(state.analytics.active_now!==newCount){state.analytics.active_now=newCount;render();}
+  state.analyticsError='';
+ }catch(err){
+  // Missing SQL patch produces a clear message rather than a misleading active count.
+  state.analyticsError='Active count could not update: '+err.message+' (run ACTIVE_COUNT_FIX_RUN_ONCE.sql).';
+  if(state.page==='analytics')render();
+ }finally{activeRequestInFlight=false;}
+}
+function startActiveCountPolling(){
+ stopActiveCountPolling();
+ if(!authorized)return;
+ fetchActiveOnly();
+ activePollTimer=setInterval(fetchActiveOnly,15000);
+}
+document.addEventListener('visibilitychange',()=>{
+ if(document.visibilityState==='visible' && state.page==='analytics' && authorized)fetchActiveOnly();
+});
+function setPage(p){state.page=p;state.menu=false;state.selected=null;state.dateOpen=false;if(p==='overview'||p==='calendar')state.statusFilter='All';render();if(p==='analytics')startActiveCountPolling();else stopActiveCountPolling()}
 function applyDate(from,to){if(from&&to&&from>to){notify('The start date must be before the end date.');return}state.dateFrom=from||'';state.dateTo=to||'';state.dateOpen=false;state.selected=null;render()}
 async function refresh(silent=false){
  if(!authorized)return;
@@ -193,6 +222,44 @@ const SUPABASE_URL = 'https://jdspovcqkxljnlnbzjdl.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_BYkSpCDo8xuEzIuR62cUWQ_MbHSoBI9';
 const SESSION_KEY='ilmix_dashboard_password_session';
 let sb=null,authorized=false,sessionToken='',authBootError='';
+let activePollTimer=null,activeRequestInFlight=false;
+// Dependency-free Supabase RPC wrapper. Keeps the existing Supabase SQL functions
+// and the rest of the dashboard unchanged; reports errors instead of hanging.
+function createRpcClient(){
+  const root=SUPABASE_URL.replace(/\/$/,'');
+  return {
+    async rpc(functionName,payload={}){
+      const controller=new AbortController();
+      const abortTimer=setTimeout(()=>controller.abort(),15000);
+      try{
+        const response=await fetch(root+'/rest/v1/rpc/'+encodeURIComponent(functionName),{
+          method:'POST',
+          mode:'cors',
+          cache:'no-store',
+          headers:{
+            'apikey':SUPABASE_PUBLISHABLE_KEY,
+            'Content-Type':'application/json',
+            'Accept':'application/json'
+          },
+          body:JSON.stringify(payload),
+          signal:controller.signal
+        });
+        const raw=await response.text();
+        let result=null;
+        if(raw){try{result=JSON.parse(raw)}catch{result=raw}}
+        if(!response.ok){
+          const message=(result&&typeof result==='object'&&result.message)||('HTTP '+response.status);
+          const detail=(result&&typeof result==='object'&&result.details)||'';
+          return {data:null,error:{message:message+(detail?' — '+detail:''),code:(result&&result.code)||String(response.status)}};
+        }
+        return {data:result,error:null};
+      }catch(error){
+        const timedOut=error&&error.name==='AbortError';
+        return {data:null,error:{message:timedOut?'Request timed out. Check your internet connection.':'Network request failed. Verify your connection, Supabase project URL and allowed site origin.',code:'NETWORK'}};
+      }finally{clearTimeout(abortTimer)}
+    }
+  };
+}
 function savedToken(){try{return localStorage.getItem(SESSION_KEY)||''}catch{return ''}}
 function saveToken(token){try{localStorage.setItem(SESSION_KEY,token)}catch{}}
 function forgetToken(){try{localStorage.removeItem(SESSION_KEY)}catch{}}
@@ -213,9 +280,8 @@ async function checkAuthorized(){
  return authorized;
 }
 async function initialize(){
- if(!window.supabase?.createClient){authBootError='Supabase library failed to load. Check your internet connection and reload.';render();return;}
  try{
-  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+  sb=createRpcClient();
   sessionToken=savedToken();
   if(sessionToken){if(await checkAuthorized())await refresh(true);else authBootError='Your login expired. Enter your password again.'}
  }catch(e){authorized=false;authBootError='SQL login connection error: '+e.message+'. Run PASSWORD_ONLY_LOGIN.sql in Supabase SQL Editor.'}
@@ -224,20 +290,22 @@ async function initialize(){
 async function login(){
  const btn=$('loginBtn'),pass=$('adminPassword')?.value||'';
  if(!btn)return;
- btn.disabled=true;$('loginError').textContent='Checking password…';
+ if(!pass){$('loginError').textContent='Please enter your dashboard password.';return;}
+ btn.disabled=true;btn.textContent='Logging in…';$('loginError').textContent='Checking password…';
  try{
   if(!sb)throw Error('Supabase is not ready');
   const {data,error}=await sb.rpc('ilmix_password_login',{p_password:pass});
-  if(error)throw Error('SQL login failed: '+error.message+'. Confirm PASSWORD_ONLY_LOGIN.sql has been run.');
-  if(data?.error==='invalid_password')throw Error('Wrong password. Please try again.');
+  if(error)throw Error(error.code==='PGRST202'||error.code==='404'?'Login function is missing in Supabase. Run PASSWORD_ONLY_LOGIN.sql in SQL Editor.':'Login connection error: '+error.message);
+  if(data?.error==='invalid_password')throw Error('Wrong password. If you used another password before, run RESET_PASSWORD_TO_ILMIX.sql in Supabase SQL Editor.');
   if(data?.error==='locked')throw Error('Too many attempts. Try again in one minute.');
   if(data?.error==='not_configured')throw Error('Password has not been configured in Supabase SQL.');
   if(!data?.token)throw Error('SQL did not return a login session.');
   sessionToken=data.token;saveToken(sessionToken);authorized=true;
   state.leads=[];state.error='';await refresh(true);render();
- }catch(e){const el=$('loginError');if(el)el.textContent=e.message;btn.disabled=false;}
+ }catch(e){const el=$('loginError');if(el)el.textContent=e.message;btn.disabled=false;btn.textContent='Log in →';}
 }
 async function logout(){
+ stopActiveCountPolling();
  const oldToken=sessionToken;
  sessionToken='';authorized=false;state.leads=[];state.analytics=null;state.analyticsError='';state.lastSync=null;state.error='';forgetToken();render();
  if(sb&&oldToken){try{await sb.rpc('ilmix_password_logout',{p_token:oldToken})}catch{}}
@@ -246,8 +314,8 @@ document.addEventListener('click',e=>{if(!authorized)return;const target=e.targe
 );
 document.addEventListener('input',e=>{if(e.target.id==='globalSearch'){state.query=e.target.value;updateViewPreservingInput()}});
 document.addEventListener('submit',e=>{if(e.target.id==='loginForm'){e.preventDefault();login()}});
-document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('globalSearch')?.focus()}if(e.key==='Escape'){if(state.modal)state.modal=false;else if(state.selected)state.selected=null;else state.dateOpen=false;render()}});
-render();window.addEventListener('load',initialize);
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('globalSearch')?.focus()}if(e.key==='Escape'&&authorized){if(state.modal)state.modal=false;else if(state.selected)state.selected=null;else state.dateOpen=false;render()}});
+sb=createRpcClient();render();initialize();
 </script>
 </body>
 </html>
